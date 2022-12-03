@@ -7,14 +7,14 @@ using Xunit.Abstractions;
 
 namespace AdventOfCode2022.Day3;
 
-public class Reorganization
+public class RucksackReorganization
 {
     private readonly ITestOutputHelper _logger;
 
-    public Reorganization(ITestOutputHelper logger) => _logger = logger;
+    public RucksackReorganization(ITestOutputHelper logger) => _logger = logger;
 
     [Fact]
-    public void CalculateSumOfPriorities()
+    public void Part1_TwoMatchingItems_CalculateSumOfPriorities()
     {
         var elves = CreateElves();
         elves.Should().NotBeEmpty();
@@ -29,10 +29,21 @@ public class Reorganization
         _logger.WriteLine("Sum of priorities: " + sumOfPriorities);
     }
     
+    [Fact]
+    public void Part2_ThreeMatchingBadges_CalculateSumOfPriorities()
+    {
+        var elves = CreateElves();
+        var groups = elves.Chunk(3).Select(group => new Group(group.ToList()));
+
+        var sum = groups.Sum(group => group.CalculateBadgePriority());
+        _logger.WriteLine("Total Badge priority sum: " + sum);
+    }
+    
     private static List<Elf> CreateElves() =>
         File.ReadLines("Day3/rucksacks.txt")
             .Select(line =>
-                new Elf(new Rucksack(
-                    line[..(line.Length / 2)], 
-                    line[(line.Length / 2)..]))).ToList();
+                new Elf(
+                    new Rucksack(
+                        line[..(line.Length / 2)], 
+                        line[(line.Length / 2)..]))).ToList();
 }
