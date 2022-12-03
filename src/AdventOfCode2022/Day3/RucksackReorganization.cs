@@ -25,7 +25,7 @@ public class RucksackReorganization
             .Should().NotBeEmpty()
             .And.HaveLength(rucksack.Compartment2.Length);
 
-        var sumOfPriorities = elves.Sum(elf => elf.CalculateItemPriority());
+        var sumOfPriorities = elves.Sum(elf => elf.Rucksack.Duplicate.Priority);
         _logger.WriteLine("Sum of priorities: " + sumOfPriorities);
     }
     
@@ -35,7 +35,7 @@ public class RucksackReorganization
         var elves = CreateElves();
         var groups = elves.Chunk(3).Select(group => new Group(group.ToList()));
 
-        var sum = groups.Sum(group => group.CalculateBadgePriority());
+        var sum = groups.Sum(group => group.Badge.Priority);
         _logger.WriteLine("Total Badge priority sum: " + sum);
     }
     
