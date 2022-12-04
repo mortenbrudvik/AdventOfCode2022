@@ -33,7 +33,7 @@ public class CampCleanup
     }
     
     private IEnumerable<IEnumerable<HashSet<int>>> GetTeams() =>
-        File.ReadLines("Day4/cleanup-list.txt")
+        File.ReadLines("Day4/input.txt")
             .Select(line => line.Split(',')
                 .Select(pair => pair.Split('-').Select(int.Parse))
                 .Select(pair => new HashSet<int>(

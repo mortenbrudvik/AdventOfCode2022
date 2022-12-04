@@ -15,7 +15,7 @@ public class CalorieCounting
     [Fact]
     public void Part1_FindElfCarryingTheMostCalories()
     {
-        var mostCalories = File.ReadLines("day1/elves-food-calories.txt")
+        var mostCalories = File.ReadLines("day1/input.txt")
             .Split(string.IsNullOrWhiteSpace)
             .Max(calories => calories.Sum(int.Parse));
 
@@ -25,7 +25,7 @@ public class CalorieCounting
     [Fact]
     public void Part1_FindTopThreeElvesCarryingTheMost()
     {
-        var sum = File.ReadLines("day1/elves-food-calories.txt")
+        var sum = File.ReadLines("day1/input.txt")
             .Split(string.IsNullOrWhiteSpace)
             .Select(calories => calories.Sum(int.Parse))
             .OrderByDescending(x => x)

@@ -40,7 +40,7 @@ public class RucksackReorganization
     }
     
     private static List<Elf> CreateElves() =>
-        File.ReadLines("Day3/rucksacks.txt")
+        File.ReadLines("Day3/input.txt")
             .Select(line =>
                 new Elf(
                     new Rucksack(
