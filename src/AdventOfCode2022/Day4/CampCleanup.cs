@@ -1,9 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FluentAssertions;
-using MoreLinq;
-using MoreLinq.Extensions;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -18,14 +16,26 @@ public class CampCleanup
     [Fact]
     public void Part1_CountFullyContainedPairs()
     {
-        var numberOfContained = File.ReadLines("Day4/cleanup-list.txt")
-            .Select(line => line.Split(',')
-                .Select(pair => pair.Split('-').Select(int.Parse))
-                .Select(pair => Enumerable.Range(pair.First(), pair.Last()-pair.First()+1)))
+        var numberOfContained = GetTeams()
             .Count(twoElves =>                 
                 !twoElves.First().Except(twoElves.Last()).Any() ||
                 !twoElves.Last().Except(twoElves.First()).Any());
         
         _logger.WriteLine("Number of contained teams: " + numberOfContained);
     }
+
+    [Fact]
+    public void Part2_CountNumberOfPairsThatOverlap()
+    {
+        var numberOfOverlapping = GetTeams()
+            .Count(x => x.First().Intersect(x.Last()).Any());
+
+        Console.Out.WriteLine("Number of overlapping teams: " + numberOfOverlapping);
+    }
+    
+    private IEnumerable<IEnumerable<IEnumerable<int>>> GetTeams() =>
+        File.ReadLines("Day4/cleanup-list.txt")
+            .Select(line => line.Split(',')
+                .Select(pair => pair.Split('-').Select(int.Parse))
+                .Select(pair => Enumerable.Range(pair.First(), pair.Last()-pair.First()+1)));
 }
