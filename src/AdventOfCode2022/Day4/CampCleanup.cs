@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,9 +16,9 @@ public class CampCleanup
     public void Part1_CountFullyContainedPairs()
     {
         var numberOfContained = GetTeams()
-            .Count(twoElves =>                 
-                !twoElves.First().Except(twoElves.Last()).Any() ||
-                !twoElves.Last().Except(twoElves.First()).Any());
+            .Count(x =>                 
+                x.First().IsSubsetOf(x.Last()) ||
+                x.Last().IsSubsetOf(x.First()));
         
         _logger.WriteLine("Number of contained teams: " + numberOfContained);
     }
@@ -28,14 +27,15 @@ public class CampCleanup
     public void Part2_CountNumberOfPairsThatOverlap()
     {
         var numberOfOverlapping = GetTeams()
-            .Count(x => x.First().Intersect(x.Last()).Any());
+            .Count(x => x.First().Overlaps(x.Last()));
 
-        Console.Out.WriteLine("Number of overlapping teams: " + numberOfOverlapping);
+        _logger.WriteLine("Number of overlapping teams: " + numberOfOverlapping);
     }
     
-    private IEnumerable<IEnumerable<IEnumerable<int>>> GetTeams() =>
+    private IEnumerable<IEnumerable<HashSet<int>>> GetTeams() =>
         File.ReadLines("Day4/cleanup-list.txt")
             .Select(line => line.Split(',')
                 .Select(pair => pair.Split('-').Select(int.Parse))
-                .Select(pair => Enumerable.Range(pair.First(), pair.Last()-pair.First()+1)));
+                .Select(pair => new HashSet<int>(
+                    Enumerable.Range(pair.First(), pair.Last()-pair.First()+1))));
 }
