@@ -6,9 +6,13 @@ public record GameAction
 
     public GameAction(char action) => _action = action;
 
-    public int Score => _action % (_action < 35 ? 32 : 29);
+    public int Score => _action % (_action < 'D' ? 32 : 29);
 
     public bool IsRock => _action == 'A' || _action == 'X';
     public bool IsPaper => _action == 'B'  || _action == 'Y';
     public bool IsScissors => _action == 'C'  || _action == 'Z';
+
+    public static GameAction Rock => new('A');
+    public static GameAction Paper => new('B');
+    public static GameAction Scissors => new('C');
 }

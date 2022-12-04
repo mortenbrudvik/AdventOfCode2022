@@ -1,8 +1,5 @@
-using System;
 using System.IO;
 using System.Linq;
-using MoreLinq;
-using MoreLinq.Extensions;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -17,7 +14,6 @@ public class RockPaperScissors
     [Fact]
     public void Part1_ScoreAccordingToStrategyGuide()
     {
-
         var score = File.ReadLines("Day2/input.txt")
             .Select(line => line.Split(' '))
             .Select(x => CalculateScore(
@@ -47,8 +43,31 @@ public class RockPaperScissors
     };
     
     [Fact]
-    public void Part2_()
+    public void Part2_ScoreAccordingToStrategyGuideTake2()
     {
+        var score = File.ReadLines("Day2/input.txt")
+            .Select(line => line.Split(' '))
+            .Select(x => CalculateScore(
+                opponentAction: new GameAction(char.Parse(x.First())),
+                yourAction: SelectAction(
+                    new GameAction(char.Parse(x.First()))
+                    , char.Parse(x.Last()))))
+            .Sum();
+        
+        _logger.WriteLine("Score according to strategy guide: " + score);
         
     }
+
+    private GameAction SelectAction(GameAction opponentAction, char action) => action switch
+    {
+        'X' when opponentAction.IsPaper => GameAction.Rock,
+        'X' when opponentAction.IsRock => GameAction.Scissors,
+        'X' when opponentAction.IsScissors => GameAction.Paper,
+
+        'Y' => opponentAction,
+
+        'Z' when opponentAction.IsPaper => GameAction.Scissors,
+        'Z' when opponentAction.IsRock => GameAction.Paper,
+        'Z' when opponentAction.IsScissors => GameAction.Rock,
+    };
 }
