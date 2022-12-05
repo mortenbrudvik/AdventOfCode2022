@@ -16,28 +16,42 @@ public class SupplyStacks
     [Fact]
     public void Part1_()
     {
-        var lines = File.ReadLines("Day5/input.txt");
-        var parts = lines.Split(string.IsNullOrWhiteSpace).ToList();
-        var cargoHold = parts[0].ToList();
-        var moves = parts[1];
+        var parts = File.ReadLines("Day5/input.txt").Split(string.IsNullOrWhiteSpace).ToList();
+        
+        var moves = parts[1]
+            .Select(move => move.Split(' ').Where(x => char.IsNumber(x[0])))
+            .Select(x => x).Select(move => move.Select(int.Parse).ToList()).ToList();
 
-        var stacks = cargoHold
+        var stacks = parts[0]
             .Select(row => row.Chunk(4)
                 .Select(x => new string(x).Trim()))
             .SkipLast()
             .Transpose()
-            .Select(x=> 
-                x.SkipWhile(string.IsNullOrWhiteSpace));
-            
-        ShowCargoHold(cargoHold);
+            .Select(x=> x.SkipWhile(string.IsNullOrWhiteSpace).Select(x => x.Trim('[').Trim(']')))
+            .Select(x => new Stack<string>(x.Reverse())).ToList();
+
+        var Move = (int number, int from, int to) =>
+        {
+            for (var i = 0; i < number; i++)
+            {
+                var item = stacks[from - 1].Pop();
+                stacks[to - 1].Push(item);
+            }
+        };
+        
+        ShowCurrentState(stacks);
+        moves.ForEach(move => Move(move[0], move[1], move[2]));
+        ShowCurrentState(stacks);
+        
+        var topmostCrates = stacks.Select(x => x.Pop())
+            .Aggregate((a,b) => a + b);
+        
+        _logger.WriteLine("Topmost crates after rearrangement: " + topmostCrates);
     }
     
-    private void ShowCargoHold(List<string> cargoHold) => cargoHold
-            .Select(row => 
-                row.Chunk(4)
-                    .Select(x => new string(x).Trim()))
-            .Select(x=> 
-                x.Select(y => y.Length() == 0 ? "   " : y[0] == '[' ? y : " " + y + " "))
-            .ForEach(x => 
-                _logger.WriteLine("" + string.Join(' ', x)));
+    private void ShowCurrentState(IEnumerable<Stack<string>> stacks)
+    {
+        stacks.ForEach(x => _logger.WriteLine(string.Join(' ', x)));
+        _logger.WriteLine("");
+    }
 }
