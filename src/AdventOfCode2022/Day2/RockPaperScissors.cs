@@ -15,59 +15,35 @@ public class RockPaperScissors
     public void Part1_ScoreAccordingToStrategyGuide()
     {
         var score = File.ReadLines("Day2/input.txt")
-            .Select(line => line.Split(' '))
-            .Select(x => CalculateScore(
-                opponentAction: new GameAction(char.Parse(x.First())),
-                yourAction: new GameAction(char.Parse(x.Last()))
-                ))
+            .Select(strategy => strategy switch
+            {
+                "A Y" or "B Z" or "C X" => 6,
+                "A X" or "B Y" or "C Z" => 3,
+                _ => 0
+            } + strategy[^1] % 29)
             .Sum();
-        
+
         _logger.WriteLine("Score according to strategy guide: " + score);
     }
-
-
-    private static int CalculateScore(GameAction opponentAction, GameAction yourAction) => opponentAction switch
-    {
-        _ when opponentAction.IsPaper && yourAction.IsPaper => 3 + yourAction.Score,
-        _ when opponentAction.IsPaper && yourAction.IsRock => yourAction.Score,
-        _ when opponentAction.IsPaper && yourAction.IsScissors => 6 + yourAction.Score,
-        
-        _ when opponentAction.IsRock && yourAction.IsRock => 3 + yourAction.Score,
-        _ when opponentAction.IsRock && yourAction.IsPaper => 6 + yourAction.Score,
-        _ when opponentAction.IsRock && yourAction.IsScissors => yourAction.Score,
-        
-        _ when opponentAction.IsScissors && yourAction.IsScissors => 3 + yourAction.Score,
-        _ when opponentAction.IsScissors && yourAction.IsRock => 6 + yourAction.Score,
-        _ when opponentAction.IsScissors && yourAction.IsPaper => yourAction.Score,
-        _ => 0
-    };
     
     [Fact]
     public void Part2_ScoreAccordingToStrategyGuideTake2()
     {
         var score = File.ReadLines("Day2/input.txt")
-            .Select(line => line.Split(' '))
-            .Select(x => CalculateScore(
-                opponentAction: new GameAction(char.Parse(x.First())),
-                yourAction: SelectAction(
-                    new GameAction(char.Parse(x.First()))
-                    , char.Parse(x.Last()))))
+            .Select(strategy => strategy[..2] + strategy switch
+            {
+                "C Z" or "A Y" or "B X" => "X",
+                "A Z" or "B Y" or "C X" => "Y",
+                "B Z" or "C Y" or "A X" => "Z"
+             })
+            .Select(strategy => strategy switch
+            {
+                "A Y" or "B Z" or "C X" => 6,
+                "A X" or "B Y" or "C Z" => 3,
+                _ => 0
+            } + strategy[^1] % 29)
             .Sum();
         
         _logger.WriteLine("Score according to strategy guide: " + score);
-        
     }
-
-    private GameAction SelectAction(GameAction opponentAction, char action) => action switch
-    {
-        'X' when opponentAction.IsPaper => GameAction.Rock,
-        'X' when opponentAction.IsRock => GameAction.Scissors,
-        'X' when opponentAction.IsScissors => GameAction.Paper,
-
-        'Y' => opponentAction,
-
-        'Z' when opponentAction.IsPaper => GameAction.Scissors,
-        'Z' when opponentAction.IsRock => GameAction.Paper,
-        'Z' when opponentAction.IsScissors => GameAction.Rock,
-    };
 }
