@@ -14,7 +14,7 @@ public class SupplyStacks
     public SupplyStacks(ITestOutputHelper logger) => _logger = logger;
 
     [Fact]
-    public void Part1_()
+    public void Part1_RearrangeCargo()
     {
         var parts = File.ReadLines("Day5/input.txt").Split(string.IsNullOrWhiteSpace).ToList();
         
