@@ -15,12 +15,7 @@ public class RockPaperScissors
     public void Part1_ScoreAccordingToStrategyGuide()
     {
         var score = File.ReadLines("Day2/input.txt")
-            .Select(strategy => strategy switch
-            {
-                "A Y" or "B Z" or "C X" => 6,
-                "A X" or "B Y" or "C Z" => 3,
-                _ => 0
-            } + strategy[^1] % 29)
+            .Select(CalculateScore)
             .Sum();
 
         _logger.WriteLine("Score according to strategy guide: " + score);
@@ -36,14 +31,20 @@ public class RockPaperScissors
                 "A Z" or "B Y" or "C X" => "Y",
                 "B Z" or "C Y" or "A X" => "Z"
              })
-            .Select(strategy => strategy switch
-            {
-                "A Y" or "B Z" or "C X" => 6,
-                "A X" or "B Y" or "C Z" => 3,
-                _ => 0
-            } + strategy[^1] % 29)
+            .Select(CalculateScore)
             .Sum();
         
         _logger.WriteLine("Score according to strategy guide: " + score);
     }
+
+    private static int CalculateScore(string strategy) =>
+        strategy[^1] % 29 +
+        strategy switch
+        {
+            "A Y" or "B Z" or "C X" => 6,
+            "A X" or "B Y" or "C Z" => 3,
+            _ => 0
+        };
+
 }
+
