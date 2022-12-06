@@ -1,9 +1,10 @@
 ﻿using System.IO;
 using System.Linq;
 using FluentAssertions;
-using LanguageExt;
 using Xunit;
 using Xunit.Abstractions;
+
+using static MoreLinq.Extensions.TakeUntilExtension;
 
 namespace AdventOfCode2022.Day6;
 
@@ -12,7 +13,6 @@ public class TuningTrouble
     private readonly ITestOutputHelper _logger;
 
     public TuningTrouble(ITestOutputHelper logger) => _logger = logger;
-
 
     [Fact]
     public void Part1_FindHowManyCharactersNeedToBeProcessed()
@@ -25,29 +25,20 @@ public class TuningTrouble
         
         _logger.WriteLine("Start-of-packet marker received at position: " + markedPosition);
     }
-    
+
     [Theory]
     [InlineData("bvwbjplbgvbhsrlpgdmjqwftvncz", 5)]
     [InlineData("nppdvjthqldpwncqszvftbrmjlhg", 6)]
     [InlineData("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 10)]
     [InlineData("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 11)]
-    public void FindMarker_ShouldFindMarker(string datastream, long exptected)
+    public void FindMarker_ShouldFindMarker(string data, int expected)
     {
-        FindMarker(datastream).Should().Be(exptected);
+        FindMarker(data).Should().Be(expected);
     }
 
-    private static long FindMarker(string data)
-    {
-        var chars = new Seq<char>();
-
-        for (var i = 0; i < data.Length; i++)
-        {
-            chars = chars.TakeLast(3).ToSeq().Add(data[i]);
-
-            if (chars.Length == 4 && chars.Distinct().Count() == chars.Count)
-                return i + 1;
-        }
-
-        return -1;
-    }
+    private static int FindMarker(string data) =>
+        data.Scan("", (a, b) => a+b)
+            .TakeUntil(x => 
+                x.TakeLast(4).Length() == 4 &&
+                x.TakeLast(4).Distinct().Length() == x.TakeLast(4).Length()).Last().Length;
 }
