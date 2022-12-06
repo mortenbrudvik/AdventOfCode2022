@@ -35,6 +35,7 @@ public class SupplyStacks
         _logger.WriteLine("Topmost crates after rearrangement: " + topmostCrates);
     }
 
+    [Fact]
     public void Part2_RearrangeCargoMoreEffiently()
     {
         var (moves, stacks) = ExtractCargoData();
@@ -60,16 +61,17 @@ public class SupplyStacks
     
     private (List<List<int>> moves, List<Stack<string>> cargoStacks) ExtractCargoData()
     {
-        var parts = MoreEnumerable.Split(File.ReadLines("Day5/input.txt"), string.IsNullOrWhiteSpace).ToList();
+        var parts = File.ReadLines("Day5/input.txt")
+            .Split(string.IsNullOrWhiteSpace).ToList();
         
         var moves = parts[1]
             .Select(move => move.Split(' ').Where(x => char.IsNumber(x[0])))
             .Select(x => x).Select(move => move.Select(int.Parse).ToList()).ToList();
 
-        var cargoStacks = MoreEnumerable.Transpose(parts[0]
-                .Select(row => row.Chunk(4)
-                    .Select(x => new string(x).Trim()))
-                .SkipLast())
+        var cargoStacks = parts[0]
+            .Select(row => row.Chunk(4)
+                .Select(x => new string(x).Trim()))
+            .SkipLast().Transpose()
             .Select(x=> x.SkipWhile(string.IsNullOrWhiteSpace).Select(x => x.Trim('[').Trim(']')))
             .Select(x => new Stack<string>(x.Reverse())).ToList();
 
