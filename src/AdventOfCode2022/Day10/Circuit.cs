@@ -5,5 +5,5 @@ namespace AdventOfCode2022.Day10;
 
 public static class Circuit
 {
-    public static IObservable<long> Clock => Observable.Interval(TimeSpan.FromSeconds(1));
+    public static IObservable<long> Clock => Observable.Interval(TimeSpan.FromMilliseconds(10));
 }
