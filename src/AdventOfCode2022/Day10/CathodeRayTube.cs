@@ -8,21 +8,16 @@ using Xunit.Abstractions;
 
 using static LanguageExt.Prelude;
 
-namespace AdventOfCode2022.Day10;
+namespace AdventOfCode2022.Day10; // EHBZLRJR
 
-public class CathodeRayTube
+public class CathodeRayTube : XunitContextBase
 {
-    private readonly ITestOutputHelper _logger;
-
-    public CathodeRayTube(ITestOutputHelper logger) => _logger = logger;
+    public CathodeRayTube(ITestOutputHelper logger) : base(logger) {}
 
     [Fact]
     public async Task Part1_CalculateTotalSignalStrength()
     {
-        var memory = new Stack<Instruction>(File.ReadLines("Day10/input.txt")
-            .Reverse()
-            .Select(l => l.Split(' '))
-            .Select(c => new Instruction(c[0], c.Length == 2 ? c[1] : "", c[0] == "noop" ? 1 : 2 )));
+        var memory = LoadDataIntoMemory("Day10/input.txt");
 
         long totalSignalStrength = 0;
         var cpu = new Cpu(memory);
@@ -33,9 +28,41 @@ public class CathodeRayTube
                 totalSignalStrength += args.Cycle * args.X;
         };
 
+        await WaitUntilProcessingCompletes(memory, cpu);
+        
+        WriteLine("Total signal strength: " + totalSignalStrength);
+    }
+
+    [Fact]
+    public async Task Part2_DrawOnCrt()
+    {
+        var memory = LoadDataIntoMemory("Day10/input.txt");
+        var cpu = new Cpu(memory);
+        cpu.Changed += (_, args) => { DrawPixel(args.X, args.Cycle); };
+        
+        await WaitUntilProcessingCompletes(memory, cpu);
+    }
+
+    private static async Task WaitUntilProcessingCompletes(Stack<Instruction> memory, Cpu cpu)
+    {
         while (memory.Count > 0 || cpu.CurrentInstruction != None)
             await Task.Delay(100);
-        
-        _logger.WriteLine("Total signal strength: " + totalSignalStrength);
     }
+
+    private static void DrawPixel(int x, long cycle)
+    {
+        var spritePos = cycle % 40;
+        var pixel = spritePos-1 >= x - 1 && spritePos-1 <= x + 1 ? "#" : ".";
+
+        if(spritePos == 0 )
+            XunitContext.WriteLine(pixel);
+        else
+            XunitContext.Write(pixel);
+    }
+
+    private static Stack<Instruction> LoadDataIntoMemory(string filePath) =>
+        new(File.ReadLines(filePath)
+            .Reverse()
+            .Select(l => l.Split(' '))
+            .Select(c => new Instruction(c[0], c.Length == 2 ? c[1] : "", c[0] == "noop" ? 1 : 2 )));
 }

@@ -22,6 +22,7 @@ public class Cpu
         {
             Cycle = clock+1; 
 
+
             CurrentInstruction.IfSome(i =>
             {
                 if (i.TimeToComplete + _instructionCycleStarted == Cycle)
@@ -30,7 +31,7 @@ public class Cpu
                     CurrentInstruction = null;
                 }
             });
-                
+
             CurrentInstruction.IfNone(() =>
             {
                 if( memory.Count == 0 ) return;
